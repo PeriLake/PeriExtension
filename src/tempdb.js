@@ -18,6 +18,7 @@ class TempDB {
     on(type, callback) {
         this.events[type] = this.events[type] || [];
         this.events[type].push(callback);
+        return this
     }
 
     reset() {
@@ -28,12 +29,13 @@ class TempDB {
     }
 
     get(name) {
+        var dei=this.json.get(name);
         if (this.events["get"]) {
             this.events["get"].forEach(c => {
-                c(name);
+                c(name,dei);
             });
         }
-        return this.json.get(name)
+        return dei
 
     }
     /// todo client.on("restartingdb",func)
