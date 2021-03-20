@@ -38,7 +38,6 @@ class TempDB {
         return dei
 
     }
-    /// todo client.on("restartingdb",func)
     has(a) {
         return this.json.has(a)
     }
