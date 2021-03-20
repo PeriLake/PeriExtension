@@ -3,7 +3,6 @@ class TempDB {
     constructor({
         intervalDuration = 3600 // 1 hours \ 3600 second
     }) {
-        this.json = new JsonSerializer()
         this.events = {}
         setInterval(() => {
             this.events["reset"].forEach(a => {
