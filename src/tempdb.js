@@ -10,7 +10,7 @@ class TempDB {
     get(name) {
         return this.json.get(name)
     }
-
+ /// todo client.on("restartingdb",func)
     has(a) {
         return this.json.has(a)
     }
@@ -36,11 +36,11 @@ class TempDB {
     }
 
     size() {
-        Object.keys(this.json.json).length
+        return Object.keys(this.json.json).length
     }
 
     length() {
-        Object.keys(this.json.json).length
+        return Object.keys(this.json.json).length
     }
 }
 

@@ -4,18 +4,17 @@ class JsonSerializer {
     }
     set(name, value) {
         if (name.includes(".")) {
-            var spl = name.split(".");
-            var jsn = {};
-            var str = "jsn"
-            var first = "";
-            spl.forEach(nk => {
-                eval(`${str}["${nk}"]={}`)
-                str += peri.Virtual.StringVariable(function*() {
-                    yield `["${nk}"]`
-                })
+            var split = name.split(".")
+            var prof = "",
+                small = []
+            name.split(".").forEach(nk => {
+                small.push(nk)
+                prof += `["${nk}"]`
+                if (!this.get(small.join("."))) {
+                    eval(`this.json${prof}={}`)
+                }
             });
-            eval(`${str} = value`)
-            this.json = Object.assign(this.json, jsn)
+            eval(`this.json${prof}=value`)
         } else {
             this.json[name] = value
         }
@@ -25,9 +24,7 @@ class JsonSerializer {
         if (a.includes(".")) {
             var str = "this.json"
             a.split(".").forEach(nk => {
-                str += peri.Virtual.StringVariable(function*() {
-                    yield `["${nk}"]`
-                })
+                str += `["${nk}"]`
             });
             eval(`delete ${str}`)
 
@@ -40,9 +37,7 @@ class JsonSerializer {
         if (a.includes(".")) {
             var str = "this.json"
             a.split(".").forEach(nk => {
-                str += peri.Virtual.StringVariable(function*() {
-                    yield `["${nk}"]`
-                })
+                str += `["${nk}"]`
             });
             eval(`if (typeof ${str} == "number") {${str}+=${b}} else {new Error("Object is not number")}`)
         } else {
@@ -59,9 +54,7 @@ class JsonSerializer {
         if (a.includes(".")) {
             var str = "this.json"
             a.split(".").forEach(nk => {
-                str += peri.Virtual.StringVariable(function*() {
-                    yield `["${nk}"]`
-                })
+                str += `["${nk}"]`
             });
             eval(`if(Array.isArray(${str})) {${str}.push("${b}")} else {new Error("Object is not array")}`)
         } else {
@@ -78,9 +71,7 @@ class JsonSerializer {
         if (a.includes(".")) {
             var str = "this.json"
             a.split(".").forEach(nk => {
-                str += peri.Virtual.StringVariable(function*() {
-                    yield `["${nk}"]`
-                })
+                str += `["${nk}"]`
             });
             eval(`if(Array.isArray(${str})) {${str}.elementdelete("${b}")} else {new Error("Object is not array")}`)
         } else {
@@ -98,39 +89,17 @@ class JsonSerializer {
     }
     get(name) {
         if (name.includes(".")) {
-            try {
-                var str = "this.json"
-                name.split(".").forEach(nk => {
-                    str += peri.Virtual.StringVariable(function*() {
-                        yield `["${nk}"]`
-                    })
-                });
-                eval(`str=${str}`);
-                return str
-            } catch {
-                return null
-            }
+            var str = this.json
+            name.split(".").forEach(nk => {
+                eval(`if(str&&str["${nk}"]){str=str["${nk}"];}else{str=undefined}`)
+            });
+            return str
         } else {
             return this.json[name]
         }
     }
     has(a) {
-        if (a.includes(".")) {
-            try {
-                var str = "this.json"
-                a.split(".").forEach(nk => {
-                    str += peri.Virtual.StringVariable(function*() {
-                        yield `["${nk}"]`
-                    })
-                });
-                eval(`str=${str}`)
-                return !str ? false : true;
-            } catch {
-                return false
-            }
-        } else {
-            return !this.json[a] ? false : true
-        }
+        return !this.get(a) ? false : true
     }
 }
 
