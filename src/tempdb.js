@@ -4,13 +4,23 @@ class TempDB {
         intervalDuration = 3600 // 1 hours \ 3600 second
     }) {
         this.json = new JsonSerializer()
-        setInterval(() => this.json = new JsonSerializer(), intervalDuration * 1000)
+        this.events = {}
+        setInterval(() => {
+            this.events["reset"].forEach(a => {
+                a(this.json.toJSON());
+            });
+            this.json = new JsonSerializer();
+        }, intervalDuration * 1000)
+    }
+
+    on(type, callback) {
+        this.events[type].push(listener);
     }
 
     get(name) {
         return this.json.get(name)
     }
- /// todo client.on("restartingdb",func)
+    /// todo client.on("restartingdb",func)
     has(a) {
         return this.json.has(a)
     }
@@ -31,7 +41,7 @@ class TempDB {
         this.json.add(a, b)
     }
 
-    elementdelete(a,b){
+    elementdelete(a, b) {
         this.json.elementdelete(a, b)
     }
 
